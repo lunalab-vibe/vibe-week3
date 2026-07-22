@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- 연습용 초보 실수: ①<title> 없음 ③모바일 viewport 메타 없음 -->
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Malgun Gothic", sans-serif;
+      background: linear-gradient(135deg, #ffe0ec 0%, #e0f7fa 50%, #f3e5f5 100%);
+      color: #5a5a6e;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: #fffafc;
+      border-radius: 24px;
+      box-shadow: 0 8px 30px rgba(180, 150, 200, 0.25);
+      padding: 40px;
+      max-width: 380px;
+      text-align: center;
+    }
+    .avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 6px solid #ffd6e8;
+      object-fit: cover;
+    }
+    h1 {
+      margin: 20px 0 6px;
+      color: #c77da0;
+      font-size: 28px;
+    }
+    .intro {
+      font-size: 15px;
+      color: #8a8aa0;
+      margin-bottom: 24px;
+    }
+    .likes-title {
+      font-size: 14px;
+      letter-spacing: 2px;
+      color: #b0a0c0;
+      text-transform: uppercase;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0;
+    }
+    li {
+      background: #f6ecff;
+      border-radius: 14px;
+      padding: 10px 16px;
+      margin: 8px 0;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- 연습용 초보 실수: ②이미지 alt 없음 -->
+    <img class="avatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><rect width='140' height='140' fill='%23ffd6e8'/><circle cx='70' cy='55' r='28' fill='%23fff3f9'/><rect x='34' y='90' width='72' height='44' rx='22' fill='%23fff3f9'/></svg>">
+    <h1>김보라</h1>
+    <p class="intro">햇살 좋은 날을 사랑하는 프론트엔드 입문자예요 🌷</p>
+    <p class="likes-title">좋아하는 것</p>
+    <ul>
+      <li>🍰 달콤한 디저트</li>
+      <li>📚 잔잔한 에세이 읽기</li>
+      <li>🎧 로파이 음악</li>
+    </ul>
+  </div>
+</body>
+</html>
