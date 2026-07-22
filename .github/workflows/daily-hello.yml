@@ -1,0 +1,44 @@
+name: Daily Hello
+
+on:
+  schedule:
+    # 매일 00:00 UTC = 09:00 KST(한국 아침 9시)
+    - cron: '0 0 * * *'
+  workflow_dispatch: {}   # 수동 실행 버튼
+
+permissions:
+  contents: write
+
+jobs:
+  daily-hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update README with today's quote
+        run: |
+          set -euo pipefail
+          QUOTE="$(shuf -n 1 quotes.txt)"
+          echo "선택된 문구: $QUOTE"
+          export QUOTE
+          awk '
+            BEGIN { q = ENVIRON["QUOTE"] }
+            /<!-- QUOTE:START -->/ { print; print q; skip = 1; next }
+            /<!-- QUOTE:END -->/   { skip = 0 }
+            !skip                  { print }
+          ' README.md > README.tmp
+          mv README.tmp README.md
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- README.md; then
+            echo "README 변경 없음 — 커밋을 건너뜁니다."
+            exit 0
+          fi
+          git add README.md
+          git commit -m "chore: 오늘의 한마디 갱신 ($(date -u +%F))"
+          git push
