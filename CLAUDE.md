@@ -14,3 +14,7 @@ As the project takes shape, update this file with:
 
 - 사용자와의 모든 대화(응답, 설명)는 한국어로 작성한다.
 - 모든 커밋 메시지는 한국어로 작성한다.
+
+## Design
+
+- 버튼은 연보라(`#bb8cff`) 배경에 둥근 모서리(`border-radius: 12px`)를 적용한다.
