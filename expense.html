@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>미니 가계부 분석기</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+      background: linear-gradient(135deg, #fce4ec 0%, #e3f2fd 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 16px;
+      color: #4a4a4a;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 460px;
+      padding: 32px 28px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      text-align: center;
+      color: #7e6b8f;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #b0a4bd;
+      margin-bottom: 24px;
+    }
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .input-row input {
+      flex: 1;
+      min-width: 0;
+      padding: 12px 14px;
+      border: 2px solid #f0e6f5;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      background: #fafafa;
+      transition: border-color 0.2s;
+    }
+    .input-row input:focus {
+      outline: none;
+      border-color: #cbb7e0;
+    }
+    .input-row input.amount { max-width: 110px; }
+    .add-btn {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 14px;
+      background: #c9b6e4;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .add-btn:hover { background: #b79dd8; }
+    ul#list { list-style: none; }
+    ul#list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fdf7ff;
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      animation: fadeIn 0.25s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    li .name { flex: 1; font-size: 0.95rem; }
+    li .amt {
+      font-weight: 600;
+      color: #8a72ad;
+      margin: 0 12px;
+      white-space: nowrap;
+    }
+    .del-btn {
+      border: none;
+      background: #ffd6e0;
+      color: #d16a86;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      transition: background 0.2s;
+    }
+    .del-btn:hover { background: #ffbecd; }
+    .empty {
+      text-align: center;
+      color: #cbbcd6;
+      font-size: 0.9rem;
+      padding: 24px 0;
+    }
+    .total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px dashed #eee0f2;
+      font-size: 1.1rem;
+    }
+    .total .label { color: #9a8bab; }
+    .total .value { font-weight: 700; color: #7e6b8f; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🌸 미니 가계부 분석기</h1>
+    <p class="subtitle">항목과 금액을 입력해 지출을 기록하세요</p>
+
+    <div class="input-row">
+      <input type="text" id="nameInput" placeholder="항목명 (예: 점심)" />
+      <input type="number" id="amountInput" class="amount" placeholder="금액" min="0" />
+      <button class="add-btn" id="addBtn">추가</button>
+    </div>
+
+    <ul id="list"></ul>
+
+    <div class="total">
+      <span class="label">합계</span>
+      <span class="value"><span id="totalValue">0</span> 원</span>
+    </div>
+  </div>
+
+  <script>
+    const nameInput = document.getElementById('nameInput');
+    const amountInput = document.getElementById('amountInput');
+    const addBtn = document.getElementById('addBtn');
+    const list = document.getElementById('list');
+    const totalValue = document.getElementById('totalValue');
+
+    let items = [];
+
+    function render() {
+      list.innerHTML = '';
+      if (items.length === 0) {
+        const empty = document.createElement('li');
+        empty.className = 'empty';
+        empty.textContent = '아직 등록된 항목이 없어요';
+        empty.style.background = 'transparent';
+        list.appendChild(empty);
+      } else {
+        items.forEach((item, index) => {
+          const li = document.createElement('li');
+
+          const name = document.createElement('span');
+          name.className = 'name';
+          name.textContent = item.name;
+
+          const amt = document.createElement('span');
+          amt.className = 'amt';
+          amt.textContent = item.amount.toLocaleString('ko-KR') + '원';
+
+          const del = document.createElement('button');
+          del.className = 'del-btn';
+          del.textContent = '×';
+          del.title = '삭제';
+          del.addEventListener('click', () => {
+            items.splice(index, 1);
+            render();
+          });
+
+          li.appendChild(name);
+          li.appendChild(amt);
+          li.appendChild(del);
+          list.appendChild(li);
+        });
+      }
+
+      const total = items.reduce((sum, item) => sum + item.amount, 0);
+      totalValue.textContent = total.toLocaleString('ko-KR');
+    }
+
+    function addItem() {
+      const name = nameInput.value.trim();
+      const amount = parseInt(amountInput.value, 10);
+
+      if (!name) {
+        nameInput.focus();
+        return;
+      }
+      if (isNaN(amount) || amount < 0) {
+        amountInput.focus();
+        return;
+      }
+
+      items.push({ name, amount });
+      nameInput.value = '';
+      amountInput.value = '';
+      nameInput.focus();
+      render();
+    }
+
+    addBtn.addEventListener('click', addItem);
+    [nameInput, amountInput].forEach(el => {
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter') addItem();
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
