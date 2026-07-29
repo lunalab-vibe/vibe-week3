@@ -163,7 +163,15 @@
       padding: 32px 16px;
       border: 2px dashed #eee0f2;
       border-radius: 16px;
+      background: transparent;
     }
+    .empty.compact {
+      padding: 16px 14px;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .empty.compact .empty-icon { font-size: 1.6rem; }
+    .empty.compact .empty-title { font-size: 0.92rem; }
     .empty .empty-icon {
       font-size: 2.4rem;
       line-height: 1;
@@ -223,30 +231,50 @@
 
     let items = [];
 
+    // 안내 문구 li 를 만들어 목록에 붙인다. compact 는 항목 목록과 함께 보일 때의 축소형.
+    function appendEmptyNotice(iconText, titleText, subText, compact) {
+      const empty = document.createElement('li');
+      empty.className = compact ? 'empty compact' : 'empty';
+
+      const icon = document.createElement('span');
+      icon.className = 'empty-icon';
+      icon.textContent = iconText;
+
+      const title = document.createElement('span');
+      title.className = 'empty-title';
+      title.textContent = titleText;
+
+      const sub = document.createElement('span');
+      sub.className = 'empty-sub';
+      sub.textContent = subText;
+
+      empty.appendChild(icon);
+      empty.appendChild(title);
+      empty.appendChild(sub);
+      list.appendChild(empty);
+    }
+
     function render() {
+      const total = items.reduce((sum, item) => sum + item.amount, 0);
+
       list.innerHTML = '';
       if (items.length === 0) {
-        const empty = document.createElement('li');
-        empty.className = 'empty';
-        empty.style.background = 'transparent';
-
-        const icon = document.createElement('span');
-        icon.className = 'empty-icon';
-        icon.textContent = '🧾';
-
-        const title = document.createElement('span');
-        title.className = 'empty-title';
-        title.textContent = '아직 지출이 없어요';
-
-        const sub = document.createElement('span');
-        sub.className = 'empty-sub';
-        sub.textContent = '위에서 항목과 금액을 입력해 기록을 시작해 보세요';
-
-        empty.appendChild(icon);
-        empty.appendChild(title);
-        empty.appendChild(sub);
-        list.appendChild(empty);
+        appendEmptyNotice(
+          '🧾',
+          '아직 지출이 없어요',
+          '위에서 항목과 금액을 입력해 기록을 시작해 보세요',
+          false
+        );
       } else {
+        if (total === 0) {
+          appendEmptyNotice(
+            '🎉',
+            '기록은 있지만 지출은 0원이에요',
+            '0원 항목만 있어요 — 아직 한 푼도 안 썼네요',
+            true
+          );
+        }
+
         items.forEach((item, index) => {
           const li = document.createElement('li');
 
@@ -274,7 +302,6 @@
         });
       }
 
-      const total = items.reduce((sum, item) => sum + item.amount, 0);
       totalValue.textContent = total.toLocaleString('ko-KR');
     }
 
